@@ -1,0 +1,474 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>广告已被奶龙接管</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #fff9d8;
+      --lime: #b8ff5c;
+      --pink: #ff5bd7;
+      --cyan: #5ee7ff;
+      --orange: #ffb13d;
+      --purple: #7c4dff;
+      --night: #0f1020;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255, 91, 215, 0.38), transparent 24%),
+        radial-gradient(circle at 84% 18%, rgba(94, 231, 255, 0.32), transparent 22%),
+        radial-gradient(circle at 60% 86%, rgba(255, 177, 61, 0.36), transparent 24%),
+        linear-gradient(135deg, #13081e 0%, #111a32 48%, #25133d 100%);
+    }
+
+    body::before {
+      position: fixed;
+      inset: -20%;
+      content: "";
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 46px 46px;
+      transform: rotate(-8deg);
+      animation: grid-drift 18s linear infinite;
+      pointer-events: none;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 28px;
+      isolation: isolate;
+    }
+
+    .ticker {
+      position: fixed;
+      left: 0;
+      right: 0;
+      display: flex;
+      gap: 28px;
+      width: max-content;
+      padding: 10px 0;
+      font-size: clamp(16px, 2vw, 26px);
+      font-weight: 900;
+      color: #141414;
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+      white-space: nowrap;
+      background: repeating-linear-gradient(90deg, var(--lime) 0 24px, var(--orange) 24px 48px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+      z-index: 3;
+    }
+
+    .ticker.top {
+      top: 0;
+      animation: slide-left 18s linear infinite;
+    }
+
+    .ticker.bottom {
+      bottom: 0;
+      animation: slide-right 20s linear infinite;
+    }
+
+    .poster {
+      position: relative;
+      display: grid;
+      width: min(940px, 94vw);
+      grid-template-columns: minmax(260px, 1fr) minmax(280px, 0.85fr);
+      gap: 28px;
+      align-items: center;
+      padding: clamp(18px, 4vw, 38px);
+      border: 2px solid rgba(255, 255, 255, 0.28);
+      border-radius: 28px;
+      background: rgba(10, 11, 24, 0.74);
+      box-shadow:
+        0 40px 90px rgba(0, 0, 0, 0.52),
+        inset 0 0 80px rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(18px);
+      z-index: 2;
+    }
+
+    .poster::before,
+    .poster::after {
+      position: absolute;
+      inset: -8px;
+      border-radius: 34px;
+      content: "";
+      background: conic-gradient(from 120deg, var(--pink), var(--cyan), var(--lime), var(--orange), var(--pink));
+      filter: blur(18px);
+      opacity: 0.46;
+      z-index: -1;
+      animation: hue-spin 7s linear infinite;
+    }
+
+    .poster::after {
+      inset: 12px;
+      opacity: 0.18;
+      filter: blur(30px);
+      animation-duration: 12s;
+    }
+
+    .image-wrap {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 26px;
+      transform: rotate(-2deg);
+      animation: floaty 3.4s ease-in-out infinite;
+    }
+
+    .image-wrap::before {
+      position: absolute;
+      inset: -14px;
+      content: "";
+      border: 4px dashed rgba(255, 255, 255, 0.62);
+      border-radius: 34px;
+      animation: dash-spin 10s linear infinite;
+    }
+
+    .image-wrap img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 5px solid rgba(255, 255, 255, 0.9);
+      border-radius: inherit;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+    }
+
+    .copy {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .tag {
+      width: fit-content;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      color: #151515;
+      font-weight: 900;
+      letter-spacing: 0;
+      background: linear-gradient(90deg, var(--lime), var(--cyan));
+      box-shadow: 0 10px 24px rgba(94, 231, 255, 0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 8vw, 96px);
+      line-height: 0.95;
+      letter-spacing: 0;
+      text-shadow:
+        4px 4px 0 #24115c,
+        8px 8px 0 rgba(255, 91, 215, 0.6),
+        0 0 28px rgba(255, 249, 216, 0.35);
+    }
+
+    .subline {
+      margin: 0;
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 800;
+      line-height: 1.35;
+      color: #fff7a3;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    button,
+    .back {
+      min-height: 48px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 14px;
+      color: #111;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+      background: var(--orange);
+      box-shadow: 0 12px 0 #7a3d00, 0 18px 30px rgba(0, 0, 0, 0.28);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    button:hover,
+    .back:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 0 #7a3d00, 0 24px 36px rgba(0, 0, 0, 0.34);
+    }
+
+    button:active,
+    .back:active {
+      transform: translateY(6px);
+      box-shadow: 0 6px 0 #7a3d00, 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .back {
+      display: inline-grid;
+      place-items: center;
+      background: var(--cyan);
+      box-shadow: 0 12px 0 #00606c, 0 18px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    .back:hover {
+      box-shadow: 0 15px 0 #00606c, 0 24px 36px rgba(0, 0, 0, 0.34);
+    }
+
+    .back:active {
+      box-shadow: 0 6px 0 #00606c, 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .meter {
+      position: relative;
+      width: min(100%, 420px);
+      height: 18px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.62);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .meter span {
+      position: absolute;
+      inset: 0;
+      width: 72%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--pink), var(--lime), var(--cyan));
+      animation: meter-pop 1.2s ease-in-out infinite alternate;
+    }
+
+    .bubble {
+      position: fixed;
+      z-index: 1;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      color: #111;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+      animation: bubble-rise 8s linear infinite;
+    }
+
+    .bubble:nth-child(1) { left: 7%; animation-delay: -1s; }
+    .bubble:nth-child(2) { left: 23%; animation-delay: -5s; }
+    .bubble:nth-child(3) { left: 54%; animation-delay: -2.4s; }
+    .bubble:nth-child(4) { left: 74%; animation-delay: -6.2s; }
+    .bubble:nth-child(5) { left: 88%; animation-delay: -3.2s; }
+
+    .burst {
+      position: fixed;
+      inset: auto;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      pointer-events: none;
+      background: var(--lime);
+      box-shadow: 0 0 18px var(--lime);
+      animation: sparkle 900ms ease-out forwards;
+      z-index: 4;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        overflow: auto;
+      }
+
+      .stage {
+        padding: 70px 18px;
+      }
+
+      .poster {
+        grid-template-columns: 1fr;
+      }
+
+      .image-wrap {
+        transform: none;
+      }
+    }
+
+    @keyframes grid-drift {
+      to { transform: rotate(-8deg) translate3d(46px, 46px, 0); }
+    }
+
+    @keyframes slide-left {
+      to { transform: translateX(-50%); }
+    }
+
+    @keyframes slide-right {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+
+    @keyframes hue-spin {
+      to { filter: blur(18px) hue-rotate(360deg); }
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: rotate(-2deg) translateY(0); }
+      50% { transform: rotate(2deg) translateY(-12px); }
+    }
+
+    @keyframes dash-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes meter-pop {
+      from { width: 42%; filter: hue-rotate(0deg); }
+      to { width: 100%; filter: hue-rotate(160deg); }
+    }
+
+    @keyframes bubble-rise {
+      from { bottom: -80px; transform: rotate(-7deg); opacity: 0; }
+      12%, 82% { opacity: 1; }
+      to { bottom: calc(100vh + 40px); transform: rotate(8deg); opacity: 0; }
+    }
+
+    @keyframes sparkle {
+      from { transform: translate(0, 0) scale(1); opacity: 1; }
+      to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ticker top" aria-hidden="true">
+    <span>广告位已下线 · 奶龙正在大笑 · 哈哈哈哈哈 · </span>
+    <span>广告位已下线 · 奶龙正在大笑 · 哈哈哈哈哈 · </span>
+    <span>广告位已下线 · 奶龙正在大笑 · 哈哈哈哈哈 · </span>
+  </div>
+
+  <div class="bubble" aria-hidden="true">哈哈哈</div>
+  <div class="bubble" aria-hidden="true">点广告？</div>
+  <div class="bubble" aria-hidden="true">奶龙接管</div>
+  <div class="bubble" aria-hidden="true">笑到起飞</div>
+  <div class="bubble" aria-hidden="true">再点一次</div>
+
+  <main class="stage">
+    <section class="poster" aria-label="奶龙广告落地页">
+      <div class="image-wrap">
+        <img src="nailong-assets/nailong.jpg" alt="奶龙表情包">
+      </div>
+      <div class="copy">
+        <div class="tag">LOCAL AD TAKEOVER</div>
+        <h1>奶龙<br>接管广告</h1>
+        <p class="subline">所有广告都先来这里集合，随机外链退退退。</p>
+        <div class="meter" aria-hidden="true"><span></span></div>
+        <div class="controls">
+          <button id="laughButton" type="button">播放大笑</button>
+          <button id="confettiButton" type="button">撒点快乐</button>
+          <a class="back" href="./久久热视频_这里只有精品.html">返回首页</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="ticker bottom" aria-hidden="true">
+    <span>不要赌博广告 · 不要奇怪跳转 · 只要奶龙哈哈哈 · </span>
+    <span>不要赌博广告 · 不要奇怪跳转 · 只要奶龙哈哈哈 · </span>
+    <span>不要赌博广告 · 不要奇怪跳转 · 只要奶龙哈哈哈 · </span>
+  </div>
+
+  <script>
+    const colors = ["#b8ff5c", "#ff5bd7", "#5ee7ff", "#ffb13d", "#ffffff"];
+    const laughButton = document.getElementById("laughButton");
+    const confettiButton = document.getElementById("confettiButton");
+    const laughAudio = new Audio("nailong-assets/nailong-laugh.mp3");
+    laughAudio.preload = "auto";
+
+    function burst(count = 48) {
+      for (let i = 0; i < count; i += 1) {
+        const dot = document.createElement("span");
+        dot.className = "burst";
+        dot.style.left = `${window.innerWidth / 2}px`;
+        dot.style.top = `${window.innerHeight / 2}px`;
+        dot.style.background = colors[i % colors.length];
+        dot.style.boxShadow = `0 0 20px ${colors[i % colors.length]}`;
+        dot.style.setProperty("--x", `${Math.cos(i) * (120 + Math.random() * 320)}px`);
+        dot.style.setProperty("--y", `${Math.sin(i * 1.7) * (120 + Math.random() * 260)}px`);
+        document.body.appendChild(dot);
+        dot.addEventListener("animationend", () => dot.remove(), { once: true });
+      }
+    }
+
+    function playSynthLaugh() {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+
+      const ctx = new AudioCtx();
+      const master = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      const now = ctx.currentTime;
+
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.45, now + 0.04);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 1.9);
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(720, now);
+      filter.Q.setValueAtTime(8, now);
+      filter.connect(master);
+      master.connect(ctx.destination);
+
+      for (let i = 0; i < 9; i += 1) {
+        const start = now + i * 0.16;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = i % 2 ? "triangle" : "square";
+        osc.frequency.setValueAtTime(280 + i * 34, start);
+        osc.frequency.exponentialRampToValueAtTime(520 + i * 24, start + 0.08);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.14);
+        osc.connect(gain);
+        gain.connect(filter);
+        osc.start(start);
+        osc.stop(start + 0.18);
+      }
+
+      setTimeout(() => ctx.close(), 2200);
+    }
+
+    async function playLaugh() {
+      try {
+        laughAudio.currentTime = 0;
+        await laughAudio.play();
+      } catch (error) {
+        playSynthLaugh();
+      }
+    }
+
+    laughButton.addEventListener("click", () => {
+      playLaugh();
+      burst(70);
+      document.querySelector(".image-wrap").animate(
+        [
+          { transform: "scale(1) rotate(-2deg)" },
+          { transform: "scale(1.08) rotate(3deg)" },
+          { transform: "scale(1) rotate(-2deg)" }
+        ],
+        { duration: 540, easing: "cubic-bezier(.2,.9,.3,1)" }
+      );
+    });
+
+    confettiButton.addEventListener("click", () => burst(90));
+    window.addEventListener("load", () => setTimeout(() => burst(36), 350));
+  </script>
+</body>
+</html>
