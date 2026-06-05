@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>随机素材展示</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      color: #f8f8f8;
+      background: #101014;
+    }
+
+    main {
+      display: grid;
+      min-height: 100vh;
+      grid-template-rows: 1fr auto;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .stage {
+      display: grid;
+      min-height: 0;
+      place-items: center;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100vh - 112px);
+      border-radius: 8px;
+      object-fit: contain;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+    }
+
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button,
+    a {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 8px;
+      color: #111;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: none;
+      background: #ffd84d;
+      cursor: pointer;
+    }
+
+    a {
+      background: #82eaff;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="stage">
+      <img id="materialImage" src="" alt="随机素材">
+    </div>
+    <div class="bar">
+      <button id="nextButton" type="button">换一张</button>
+      <a href="./久久热视频_这里只有精品.html">返回首页</a>
+    </div>
+  </main>
+  <script src="./material-assets.js"></script>
+  <script>
+    const images = Array.isArray(window.MATERIAL_IMAGES) ? window.MATERIAL_IMAGES : [];
+    const imageEl = document.getElementById("materialImage");
+    const nextButton = document.getElementById("nextButton");
+
+    function randomImage() {
+      return images[Math.floor(Math.random() * images.length)];
+    }
+
+    function selectedImage() {
+      const requested = new URLSearchParams(window.location.search).get("img");
+      return images.includes(requested) ? requested : randomImage();
+    }
+
+    function show(image) {
+      if (!image) return;
+      imageEl.src = image;
+    }
+
+    show(selectedImage());
+    nextButton.addEventListener("click", () => show(randomImage()));
+  </script>
+</body>
+</html>
