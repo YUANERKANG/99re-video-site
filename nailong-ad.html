@@ -364,7 +364,7 @@
   <main class="stage">
     <section class="poster" aria-label="奶龙广告落地页">
       <div class="image-wrap">
-        <img src="nailong-assets/nailong.jpg" alt="奶龙表情包">
+        <img src="nailong-assets/nailong.jpg" alt="随机素材">
       </div>
       <div class="copy">
         <div class="tag">LOCAL AD TAKEOVER</div>
@@ -386,12 +386,24 @@
     <span>不要赌博广告 · 不要奇怪跳转 · 只要奶龙哈哈哈 · </span>
   </div>
 
+  <script src="./material-assets.js"></script>
   <script>
     const colors = ["#b8ff5c", "#ff5bd7", "#5ee7ff", "#ffb13d", "#ffffff"];
     const laughButton = document.getElementById("laughButton");
     const confettiButton = document.getElementById("confettiButton");
+    const posterImage = document.querySelector(".image-wrap img");
+    const materialImages = Array.isArray(window.MATERIAL_IMAGES) ? window.MATERIAL_IMAGES : [];
     const laughAudio = new Audio("nailong-assets/nailong-laugh.mp3");
     laughAudio.preload = "auto";
+
+    function randomMaterialImage() {
+      return materialImages[Math.floor(Math.random() * materialImages.length)];
+    }
+
+    function setRandomPosterImage() {
+      if (!posterImage || !materialImages.length) return;
+      posterImage.src = randomMaterialImage();
+    }
 
     function burst(count = 48) {
       for (let i = 0; i < count; i += 1) {
@@ -468,6 +480,7 @@
     });
 
     confettiButton.addEventListener("click", () => burst(90));
+    setRandomPosterImage();
     window.addEventListener("load", () => setTimeout(() => burst(36), 350));
   </script>
 </body>
